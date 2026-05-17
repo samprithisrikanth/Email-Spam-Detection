@@ -9,199 +9,246 @@ from nltk.stem.porter import PorterStemmer
 # Download stopwords
 nltk.download('stopwords')
 
-# Create stemmer object
+# Stemmer
 ps = PorterStemmer()
 
+# Store stopwords once
+stop_words = set(stopwords.words('english'))
+
 # Text preprocessing function
+
 def transform_text(text):
 
-    # Convert to lowercase
-    text = text.lower()
+    text = str(text).lower()
 
-    # Split into words
-    text = text.split()
+    words = text.split()
 
-    # Remove stopwords and punctuation
     filtered_words = []
 
-    for word in text:
-        if word not in stopwords.words('english') and word not in string.punctuation:
+    for word in words:
+        if word not in stop_words and word not in string.punctuation:
             filtered_words.append(word)
 
-    # Apply stemming
     stemmed_words = []
 
     for word in filtered_words:
         stemmed_words.append(ps.stem(word))
 
-    # Join words back into sentence
     return " ".join(stemmed_words)
 
-# Load saved model and vectorizer
+# Load model and vectorizer
 model = pickle.load(open('spam_model.pkl', 'rb'))
 vectorizer = pickle.load(open('vectorizer.pkl', 'rb'))
 
-# Page configuration
+# Page settings
 st.set_page_config(
-    page_title="Spam Detection System",
+    page_title="MindShield",
     layout="centered"
 )
 
-# Custom CSS Styling
+# ---------- CUSTOM CSS ----------
+
 st.markdown("""
 <style>
 
 .stApp {
-    background: linear-gradient(
-        rgba(5, 10, 15, 0.92),
-        rgba(15, 20, 25, 0.96)
-    ),
-    url("https://images.unsplash.com/photo-1526378800651-cf1f6f7f2d0c?q=80&w=2070&auto=format&fit=crop");
+    background:
+    linear-gradient(rgba(10,12,16,0.95), rgba(18,22,28,0.96)),
+    url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=2070&auto=format&fit=crop');
 
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    color: #f5f5f5;
+}
+
+.block-container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
 }
 
 .main-title {
-    font-size: 44px;
-    font-weight: bold;
     text-align: center;
-    color: #d4af37;
-    margin-top: 20px;
-    letter-spacing: 2px;
-    font-family: serif;
+    font-size: 42px;
+    font-weight: 700;
+    color: #e6d3a3;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    font-family: Georgia, serif;
 }
 
 .subtitle {
     text-align: center;
-    font-size: 18px;
-    color: #cccccc;
+    color: #b8bcc5;
+    font-size: 16px;
     margin-bottom: 35px;
-    font-family: serif;
+}
+
+.description-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 16px;
+    border-radius: 14px;
+    color: #c9ced8;
+    font-size: 15px;
+    margin-bottom: 25px;
 }
 
 textarea {
-    background-color: rgba(15,15,15,0.88) !important;
-    color: white !important;
-    border-radius: 14px !important;
-    border: 1px solid #d4af37 !important;
+    background-color: rgba(12,15,20,0.92) !important;
+    color: #f5f5f5 !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(230,211,163,0.25) !important;
     font-size: 16px !important;
-    padding: 12px !important;
+    padding: 14px !important;
 }
 
-.stButton>button {
+.stButton > button {
     width: 100%;
-    background-color: rgba(20,20,20,0.9);
-    color: #d4af37;
-    border: 1px solid #d4af37;
+    height: 3.2rem;
     border-radius: 12px;
-    height: 3em;
-    font-size: 18px;
-    transition: 0.3s ease;
-}
-
-.stButton>button:hover {
-    background-color: #d4af37;
+    border: none;
+    background: #d9c089;
     color: black;
+    font-size: 16px;
+    font-weight: 600;
+    transition: 0.25s ease;
 }
 
-.result-box {
-    padding: 20px;
-    border-radius: 15px;
-    background-color: rgba(20,20,20,0.88);
-    border: 1px solid #d4af37;
+.stButton > button:hover {
+    background: #f0d79c;
+}
+
+.result-card {
     margin-top: 25px;
+    padding: 22px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
     text-align: center;
+    backdrop-filter: blur(4px);
+}
+
+.result-title {
     font-size: 24px;
-    font-family: serif;
-    color: white;
-    box-shadow: 0px 0px 20px rgba(212,175,55,0.2);
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+.result-subtitle {
+    font-size: 15px;
+    color: #c5cad3;
 }
 
 .footer {
     text-align: center;
-    margin-top: 40px;
-    color: #aaaaaa;
-    font-size: 14px;
-    font-family: serif;
+    margin-top: 50px;
+    color: #8f96a3;
+    font-size: 13px;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-# Title
+# ---------- TITLE ----------
+
 st.markdown(
-    '<div class="main-title">Spam Detection System</div>',
+    '<div class="main-title">MindShield</div>',
     unsafe_allow_html=True
 )
 
-# Subtitle
 st.markdown(
-    '<div class="subtitle">Machine Learning Powered Email Security Analyzer</div>',
+    '<div class="subtitle">Your Inbox Has a Security System Now</div>',
     unsafe_allow_html=True
 )
 
-# Input area
+# ---------- DESCRIPTION ----------
+
+st.markdown(
+    '''
+    <div class="description-box">
+    Paste an email, SMS, or suspicious message below to analyze whether the content appears safe or potentially risky.
+    </div>
+    ''',
+    unsafe_allow_html=True
+)
+
+# ---------- INPUT ----------
+
 message = st.text_area(
-    "Enter Email or Message",
-    height=200,
-    placeholder="Type your email or message here..."
+    "Message Content",
+    height=220,
+    placeholder="Paste your email, SMS, or suspicious text here..."
 )
 
-# Prediction button
+# Rule-based security keywords
+suspicious_keywords = [
+    "otp",
+    "bank account",
+    "cvv",
+    "atm",
+    "debit card",
+    "credit card",
+    "screenshot",
+    "verify account",
+    "bank details"
+]
+
+message_lower = message.lower()
+
+rule_based_spam = any(keyword in message_lower for keyword in suspicious_keywords)
+
+# ---------- BUTTON ----------
+
 if st.button("Analyze Message"):
 
     if message.strip() != "":
 
-        # Preprocess text
+        # Preprocess message
         processed_message = transform_text(message)
 
-        # Convert into vector
+        # Convert text to vector
         transformed_message = vectorizer.transform([processed_message])
 
-        # Prediction
+        # Predict
         prediction = model.predict(transformed_message)
 
-        # Probability score
+        # Confidence score
         probability = model.predict_proba(transformed_message)
 
         confidence = probability.max() * 100
 
-        # Result display
-        if prediction[0] == 1:
+        # Final spam check
+        is_spam = (prediction[0] == 1 or rule_based_spam)
 
-            st.markdown(
-                f'''
-                <div class="result-box">
-                    Spam Message Detected
-                    <br><br>
-                    Confidence Score: {confidence:.2f}%
-                </div>
-                ''',
-                unsafe_allow_html=True
+        # ---------- SPAM RESULT ----------
+
+        if is_spam:
+
+            st.error("Potential Threat Detected")
+
+            st.write(f"Confidence Score: {confidence:.2f}%")
+
+            st.caption(
+                "This message contains patterns commonly associated with phishing or spam attempts."
             )
+
+            st.progress(float(confidence) / 100)
+
+        # ---------- SAFE RESULT ----------
 
         else:
 
-            st.markdown(
-                f'''
-                <div class="result-box">
-                    Message Appears Safe
-                    <br><br>
-                    Confidence Score: {confidence:.2f}%
-                </div>
-                ''',
-                unsafe_allow_html=True
+            st.success("Message Appears Safe")
+
+            st.write(f"Confidence Score: {confidence:.2f}%")
+
+            st.caption(
+                "No suspicious patterns were detected in this message."
             )
 
-    else:
-        st.warning("Please enter a message.")
+            st.progress(float(confidence) / 100)
 
-# Footer
-st.markdown(
-    '<div class="footer">Analyze. Detect. Protect.</div>',
-    unsafe_allow_html=True
-)
-    
+    else:
+
+        st.warning("Please enter a message before analysis.")
